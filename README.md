@@ -6,6 +6,13 @@ Put your Elixir app inside minimal Docker image.
 Based on [alpine linux](https://hub.docker.com/r/bitwalker/alpine-erlang/)
 and [distillery](https://github.com/bitwalker/distillery) releases.
 
+## How is this version different from the original project?
+
+The task `mix docker.publish` can optionally accept three arguments `target`, `build-num` and `branch`.
+For example `mix docker.publish --target=RC --build-num=223 --branch=latest`
+
+We use this so that the project will accept a circle build num, a target release type and a tag like staging or master. 
+
 ## Installation
 
   1. Add `mix_docker` to your list of dependencies in `mix.exs`:

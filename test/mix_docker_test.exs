@@ -41,7 +41,7 @@ defmodule MixDockerTest do
       mix "docker.release"
     end
   end
-
+  
   test "customize" do
     inapp do
       mix "docker.customize"

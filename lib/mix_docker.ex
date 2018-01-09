@@ -42,13 +42,20 @@ defmodule MixDocker do
     Mix.shell.info "  docker run -it --rm #{image(:release)} foreground"
   end
 
-  def publish(_args) do
-    name = image(:version)
+  def publish(args) do
+    options = parse_release_args args
+    name = case options do 
+      [] -> image(:version)
+      [branch: branch] -> image(branch)
+      [build_num: build_num, target: target] -> image("#{Mix.Project.get.project[:version]}#{target}#{build_num}")
+      [target: target, build_num: build_num] -> image("#{Mix.Project.get.project[:version]}#{target}#{build_num}")
+      _ ->  image(:version)
+    end
 
     docker :tag, image(:release), name
     docker :push, name
 
-    Mix.shell.info "Docker image #{name} has been successfully created"
+    Mix.shell.info "Docker image #{name} has been successfully created."
   end
 
   def shipit(args) do
@@ -70,6 +77,13 @@ defmodule MixDocker do
   defp git_commit_count do
     {count, 0} = System.cmd "git", ["rev-list", "--count", "HEAD"]
     String.trim(count)
+  end
+
+  defp parse_release_args(args) do
+    {options, _, _} = OptionParser.parse(args,
+      switches: [target: :string, build_num: :string]
+    )
+    options
   end
 
   defp image(tag) do
